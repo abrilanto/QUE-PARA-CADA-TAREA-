@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Las Siete Magníficas · ¿Qué IA para cada tarea?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sand:#F1E4CE; --card:#FBF4E5; --card-line:#E3D2B2;
+    --ink:#3A2417; --ink-soft:#856845;
+    --brick:#9E3B22; --terra:#C0562F; --ochre:#BE7C16; --espresso:#5A3A22; --cream:#F7EEDD;
+    --green:#2F7A52; --green-bg:#E8F0EA; --red:#AF3A30; --red-bg:#F6E3DF;
+    --shadow:0 16px 36px -24px rgba(58,36,23,.55);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Work Sans',system-ui,sans-serif;color:var(--ink);
+    background:
+      radial-gradient(800px 460px at 88% -6%, rgba(190,124,22,.12), transparent 60%),
+      var(--sand);
+    min-height:100vh;line-height:1.5;padding:0 0 70px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 18px}
+
+  /* Header */
+  header.top{
+    background:linear-gradient(150deg,#A23E22 0%, #863017 60%, #6E260F 100%);
+    color:var(--cream);padding:30px 0 26px;margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  header.top .wrap{position:relative;z-index:2}
+  .sun{position:absolute;right:-40px;top:-30px;width:200px;height:200px;z-index:1;opacity:.9}
+  .sun span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(247,238,221,.16)}
+  .sun .core{width:62px;height:62px;border:none;background:radial-gradient(circle at 50% 40%,#F2C260,#E2A23C 60%,#C8841F);box-shadow:0 0 36px rgba(235,178,60,.5)}
+  .eyebrow{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#F0C98A;margin-bottom:9px}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(27px,6vw,40px);line-height:1.02;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:#F2C260}
+  .tagline{margin-top:9px;font-size:15.5px;color:#F2E2C6;max-width:48ch}
+
+  #app{margin-top:4px}
+
+  /* Generic panel */
+  .panel{background:var(--card);border:1px solid var(--card-line);border-radius:14px;box-shadow:var(--shadow);padding:22px 22px 24px}
+  @media(max-width:520px){.panel{padding:18px 15px 20px}}
+  .panel h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;letter-spacing:-.01em;margin-bottom:8px}
+  .panel p.lead{color:var(--ink-soft);font-size:15.5px;margin-bottom:4px}
+
+  /* Fichas roster */
+  .roster{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:16px 0 6px}
+  @media(max-width:560px){.roster{grid-template-columns:1fr}}
+  .ficha{border:1px solid var(--card-line);border-radius:10px;padding:13px 14px;background:#fff;position:relative;border-left:5px solid var(--c)}
+  .ficha .nm{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16.5px;color:var(--ink);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .ficha .role{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--c);font-weight:700;text-transform:uppercase}
+  .ficha .ff{font-size:13.5px;color:var(--ink);margin-top:6px}
+  .ficha .oo{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+  .nota-ninguna{margin-top:14px;background:#F4ECDB;border:1px dashed var(--espresso);border-radius:10px;padding:13px 15px;font-size:14.5px}
+  .nota-ninguna b{font-family:'Bricolage Grotesque',sans-serif}
+
+  /* Progress */
+  .progress{display:flex;align-items:center;gap:12px;margin:0 2px 14px}
+  .progress .count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--brick);letter-spacing:.05em;white-space:nowrap}
+  .segs{display:flex;gap:4px;flex:1}
+  .seg{height:5px;flex:1;border-radius:3px;background:#fff;border:1px solid var(--card-line)}
+  .seg.done{background:var(--terra);border-color:var(--terra)}
+  .seg.current{background:var(--terra);opacity:.45;border-color:var(--terra)}
+
+  /* Task */
+  .level-tag{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre);margin-bottom:9px}
+  .task{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;line-height:1.22;letter-spacing:-.01em;margin-bottom:6px}
+  .ask{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 12px}
+
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  @media(max-width:520px){.options{grid-template-columns:1fr 1fr}}
+  .opt{
+    text-align:left;background:#fff;border:1.5px solid var(--card-line);border-radius:10px;
+    padding:11px 13px;cursor:pointer;font:inherit;color:var(--ink);
+    transition:border-color .12s,transform .07s,background .12s;border-left:5px solid var(--c);
+  }
+  .opt:hover{border-color:var(--c);transform:translateY(-1px)}
+  .opt:active{transform:translateY(0)}
+  .opt:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+  .opt .nm{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15.5px}
+  .opt .role{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.3}
+  .opt.ninguna{grid-column:1 / -1;background:#F4ECDB}
+  .opt.ninguna .nm{color:var(--espresso)}
+
+  .options.locked .opt{cursor:default;transform:none}
+  .options.locked .opt:hover{transform:none}
+  .opt.pick-right{border-color:var(--green);background:var(--green-bg);box-shadow:inset 0 0 0 1px var(--green)}
+  .opt.pick-wrong{border-color:var(--red);background:var(--red-bg);box-shadow:inset 0 0 0 1px var(--red)}
+  .opt.show-right{border-color:var(--green)}
+  .opt .badge{float:right;font-family:'Space Mono',monospace;font-size:11px;font-weight:700}
+  .opt.pick-right .badge,.opt.show-right .badge{color:var(--green)}
+  .opt.pick-wrong .badge{color:var(--red)}
+
+  /* Feedback */
+  .fb{margin-top:18px;border-top:1px dashed var(--card-line);padding-top:16px;display:none}
+  .fb.show{display:block}
+  .fb .verdict{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;margin-bottom:7px}
+  .fb.ok .verdict{color:var(--green)}
+  .fb.no .verdict{color:var(--red)}
+  .fb p{font-size:15px;margin-bottom:8px}
+  .fb .why-pick{font-size:14px;color:var(--ink-soft);background:#F4ECDB;border-radius:8px;padding:9px 12px;margin-bottom:4px}
+
+  /* Buttons */
+  .row-end{margin-top:18px;display:flex;justify-content:flex-end;gap:10px}
+  .btn{font:600 15px/1 'Work Sans',sans-serif;cursor:pointer;border:none;padding:13px 22px;border-radius:9px;transition:transform .07s,background .12s}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+  .btn-primary{background:var(--brick);color:#fff}
+  .btn-primary:hover{background:#86311c}
+  .btn-ghost{background:transparent;color:var(--brick);border:1.5px solid var(--brick)}
+  .btn-ghost:hover{background:#fff}
+
+  /* Result */
+  .scoreline{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+  .score-pill{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;padding:9px 14px;border-radius:20px;border:2px solid var(--terra);color:var(--terra);background:#fff}
+  .score-pill.limites{border-color:var(--espresso);color:var(--espresso);background:#F4ECDB}
+  .profile{margin:16px 0;padding:15px 17px;border-radius:10px;background:#F4ECDB;border:1px solid var(--card-line);font-size:15.5px}
+  .profile b{font-family:'Bricolage Grotesque',sans-serif}
+
+  footer.foot{margin-top:24px;text-align:center;font-family:'Space Mono',monospace;font-size:12px;color:var(--espresso);opacity:.8;letter-spacing:.03em}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="sun"><span style="width:200px;height:200px"></span><span style="width:135px;height:135px"></span><span class="core"></span></div>
+  <div class="wrap">
+    <p class="eyebrow">Las Siete Magníficas · Gestión no docente</p>
+    <h1>¿Qué <em>IA</em> para cada tarea?</h1>
+    <p class="tagline">Sos el responsable de la oficina. Mandá cada tarea al miembro del equipo más adecuado… o decidí que no es para ninguna IA.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="app"></div>
+  <footer class="foot">El error no se castiga, se explica · ningún dato real entra a una IA</footer>
+</div>
+
+<script>
+const IAS = {
+  chatgpt:   {name:"ChatGPT",  role:"Todoterreno",        ff:"Redacción y borradores de propósito general.", oo:"Ojo: puede inventar datos.", c:"#C0562F"},
+  claude:    {name:"Claude",   role:"Textos largos",       ff:"Resume y ordena documentos extensos sin perderse.", oo:"Ojo: acceso limitado por región.", c:"#B5701B"},
+  gemini:    {name:"Gemini",   role:"La oficina Google",   ff:"Planillas, Docs y todo el ecosistema Workspace.", oo:"Ojo: requiere algo de práctica.", c:"#C79A2E"},
+  perplexity:{name:"Perplexity",role:"El verificador",     ff:"Busca y responde citando las fuentes.", oo:"Ojo: no es para redactar.", c:"#8A7B2E"},
+  meta:      {name:"Meta · LLaMA",role:"El de los canales", ff:"Asistentes dentro de WhatsApp y mensajería.", oo:"Ojo: moderación y privacidad.", c:"#A8602B"},
+  deepseek:  {name:"DeepSeek", role:"El lógico",           ff:"Razona y calcula mostrando cada paso.", oo:"Ojo: contexto de censura.", c:"#9E4B2A"},
+  grok:      {name:"Grok",     role:"El imprudente",       ff:"Creativo, pero con pocos filtros.", oo:"Ojo: poco fiable; mejor evitarlo en lo formal.", c:"#7A4A3A"},
+  ninguna:   {name:"Ninguna",  role:"No se delega",        ff:"Esta tarea no es para ninguna IA.", oo:"", c:"#5A3A22"}
+};
+const ORDER = ["chatgpt","claude","gemini","perplexity","meta","deepseek","grok","ninguna"];
+
+const LV = {1:"Nivel 1 · Encaje claro",2:"Nivel 2 · Más de una sirve",3:"Nivel 3 · Trampa de criterio"};
+
+const TASKS = [
+  {lv:1, t:"Tenés un informe de 38 páginas sobre la nueva normativa de becas y necesitás un resumen de una carilla para tu jefa.",
+   ok:["claude"],
+   why:"Claude es el más cómodo con documentos largos: mantiene el hilo de un texto extenso y resume sin perder lo importante. Revisá el resumen antes de pasarlo."},
+  {lv:1, t:"Necesitás la fecha exacta del último decreto sobre aranceles y poder citar la fuente oficial.",
+   ok:["perplexity"],
+   why:"Perplexity responde citando las fuentes, así que podés abrir el documento original y verificar el dato. Justo lo que pide un dato normativo."},
+  {lv:1, t:"Querés armar fórmulas y ordenar una planilla de turnos de la oficina en Google Sheets.",
+   ok:["gemini"],
+   why:"Gemini está integrado al ecosistema Google (Sheets, Docs, Workspace), así que es el más natural para trabajar sobre tus planillas."},
+  {lv:1, t:"Tenés que redactar un borrador de mail amable para responder una consulta general de un aspirante.",
+   ok:["chatgpt"],
+   why:"Para redacción rápida y de propósito general, ChatGPT es el todoterreno. Revisá el tono y los datos antes de enviar."},
+  {lv:1, t:"Querés resolver, paso a paso, una equivalencia de carga horaria entre dos planes de estudio.",
+   ok:["deepseek"],
+   why:"DeepSeek muestra su razonamiento paso a paso, ideal para seguir y controlar un cálculo. Verificá igual el resultado final."},
+
+  {lv:2, t:"Escribir tres versiones cortas de un aviso para la cartelera de la oficina.",
+   ok:["chatgpt","claude","gemini"],
+   why:"No hay una sola respuesta: para un texto breve y general, ChatGPT, Claude o Gemini funcionan bien. La clave no es cuál, sino revisar lo que devuelva."},
+  {lv:2, t:"Querés montar un asistente que conteste preguntas frecuentes de alumnos por WhatsApp.",
+   ok:["meta"],
+   why:"Meta (LLaMA) es el que mejor se inserta en canales de mensajería como WhatsApp. Eso sí: cuidá la moderación y la privacidad de las consultas."},
+  {lv:2, t:"Comparar dos reglamentos largos y marcar en qué se diferencian.",
+   ok:["claude","chatgpt"],
+   why:"Por el volumen de texto, Claude es la opción más cómoda, aunque ChatGPT también puede. Lo importante: contrastá las diferencias con el texto real."},
+  {lv:2, t:"Generar un cuestionario de autoevaluación para una capacitación interna del personal.",
+   ok:["chatgpt","gemini","claude"],
+   why:"Varias sirven para generar preguntas (ChatGPT, Gemini, Claude). Usá la que ya manejes y revisá que las preguntas tengan sentido para tu equipo."},
+
+  {lv:3, t:"Emitir el certificado de alumno regular, completo y listo para firmar.",
+   ok:["ninguna"],
+   why:"Un certificado es un acto administrativo: lo emite el sistema institucional con una firma autorizada, no una IA. Podés usar IA para el mail que lo acompaña, no para el documento."},
+  {lv:3, t:"Elegir a los 5 mejores candidatos de 40 CVs y descartar al resto.",
+   ok:["ninguna"],
+   why:"Una IA no debe decidir sobre personas: arrastra sesgos y no rinde cuentas. Podés usarla para armar una grilla de evaluación, pero la decisión es humana."},
+  {lv:3, t:"Pegar el acta de examen con nombres, DNI y notas para que la ordene.",
+   ok:["ninguna"],
+   why:"Son datos personales de terceros: no salen a una IA pública. Pedile el método para ordenar la planilla y trabajá vos sobre el archivo real."},
+  {lv:3, t:"Pegar el mail de un alumno —con su DNI y un problema de salud— para redactar la respuesta.",
+   ok:["ninguna"],
+   why:"Los datos sensibles nunca se pegan. Reescribí el caso en general, sin datos identificables, y recién ahí pedí ayuda con la redacción."}
+];
+const TRAP_TOTAL = TASKS.filter(t=>t.ok.includes("ninguna")).length;
+
+const app = document.getElementById('app');
+let idx=-1, results=[];
+
+function segs(){
+  return `<div class="progress"><span class="count">TAREA ${idx+1}/${TASKS.length}</span><span class="segs">${
+    TASKS.map((_,i)=>`<span class="seg ${i<idx?'done':(i===idx?'current':'')}"></span>`).join('')}</span></div>`;
+}
+
+function renderIntro(){
+  const fichas = ORDER.filter(k=>k!=="ninguna").map(k=>{
+    const a=IAS[k];
+    return `<div class="ficha" style="--c:${a.c}">
+      <div class="nm">${a.name} <span class="role">${a.role}</span></div>
+      <div class="ff">${a.ff}</div><div class="oo">${a.oo}</div></div>`;
+  }).join('');
+  app.innerHTML = `
+  <div class="panel">
+    <h2>Conocé al equipo</h2>
+    <p class="lead">Siete inteligencias artificiales, cada una con su fuerte y su punto débil. Repasalas antes de empezar.</p>
+    <div class="roster">${fichas}</div>
+    <div class="nota-ninguna"><b>Y una octava opción:</b> «Ninguna». Algunas tareas no se delegan en una IA por más útil que sea. Detectarlas es parte del juego.</div>
+    <div class="row-end"><button class="btn btn-primary" id="start">Empezar</button></div>
+  </div>`;
+  document.getElementById('start').onclick=()=>{idx=0;results=[];renderTask();scrollTop();};
+}
+
+function renderTask(){
+  const q=TASKS[idx];
+  const opts = ORDER.map(k=>{
+    const a=IAS[k];
+    return `<button class="opt ${k==='ninguna'?'ninguna':''}" data-k="${k}" style="--c:${a.c}">
+      <span class="nm">${a.name}<span class="badge"></span></span>
+      <span class="role">${a.role}</span></button>`;
+  }).join('');
+  app.innerHTML = `
+  ${segs()}
+  <div class="panel">
+    <p class="level-tag">${LV[q.lv]}</p>
+    <p class="task">${q.t}</p>
+    <p class="ask">¿A quién se la asignás?</p>
+    <div class="options" id="options">${opts}</div>
+    <div class="fb" id="fb"></div>
+    <div class="row-end" id="rowend"></div>
+  </div>`;
+  document.querySelectorAll('#options .opt').forEach(b=> b.onclick=()=>choose(b.dataset.k));
+}
+
+function choose(k){
+  const q=TASKS[idx];
+  const box=document.getElementById('options');
+  if(box.classList.contains('locked'))return;
+  box.classList.add('locked');
+  const correct=q.ok.includes(k);
+  results.push({correct, trap:q.ok.includes("ninguna")});
+
+  document.querySelectorAll('#options .opt').forEach(b=>{
+    const bk=b.dataset.k;
+    if(q.ok.includes(bk)){ b.classList.add(bk===k?'pick-right':'show-right'); b.querySelector('.badge').textContent = bk===k?'✓ tu elección':'✓'; }
+    if(bk===k && !correct){ b.classList.add('pick-wrong'); b.querySelector('.badge').textContent='✗ tu elección'; }
+  });
+
+  const fb=document.getElementById('fb');
+  let whyPick="";
+  if(!correct && k!=="ninguna"){
+    const a=IAS[k];
+    whyPick=`<div class="why-pick"><b>${a.name}</b> brilla en: ${a.ff.toLowerCase()} Para esta tarea no es la mejor opción.</div>`;
+  } else if(!correct && k==="ninguna"){
+    whyPick=`<div class="why-pick">Acá sí se puede usar una IA con criterio; no hacía falta descartar la herramienta.</div>`;
+  }
+  fb.className="fb show "+(correct?"ok":"no");
+  fb.innerHTML=`<div class="verdict">${correct?'¡Bien asignada!':'Casi — mirá por qué'}</div>${whyPick}<p>${q.why}</p>`;
+
+  const last= idx===TASKS.length-1;
+  document.getElementById('rowend').innerHTML=`<button class="btn btn-primary" id="next">${last?'Ver mi perfil':'Siguiente tarea'}</button>`;
+  document.getElementById('next').onclick=()=>{ if(last){renderResult();}else{idx++;renderTask();} scrollTop(); };
+}
+
+function renderResult(){
+  const hits=results.filter(r=>r.correct).length;
+  const trapHits=results.filter(r=>r.trap&&r.correct).length;
+  let prof;
+  if(hits>=TASKS.length-2 && trapHits===TRAP_TOTAL){
+    prof="<b>Criterio de primera.</b> Dominás a las Siete Magníficas y, sobre todo, sabés cuándo NO usar ninguna. Justo el equilibrio que se busca.";
+  } else if(TRAP_TOTAL-trapHits>=2){
+    prof="<b>Conocés bien las herramientas</b>, pero se te escapan las líneas rojas: cuándo una tarea no se delega en ninguna IA. Repasá esos casos (datos sensibles, documentos oficiales, decisiones sobre personas).";
+  } else if(hits<=Math.ceil(TASKS.length/2)){
+    prof="<b>Todavía estás conociendo al equipo.</b> Volvé a las fichas y reintentá: vas a ver mucho más claro qué hace mejor cada IA.";
+  } else {
+    prof="<b>Buen manejo.</b> Tenés clara la mayoría de las herramientas y los límites. Afiná un par de detalles y vas a tener el panorama completo.";
+  }
+  app.innerHTML=`
+  <div class="panel">
+    <h2>Tu perfil</h2>
+    <div class="scoreline">
+      <span class="score-pill">${hits} / ${TASKS.length} bien asignadas</span>
+      <span class="score-pill limites">${trapHits} / ${TRAP_TOTAL} límites detectados</span>
+    </div>
+    <div class="profile">${prof}</div>
+    <p class="lead">Recordá: lo importante no es acertar la IA perfecta, sino saber qué hace bien cada una y reconocer cuándo el trabajo es tuyo y de nadie más.</p>
+    <div class="row-end"><button class="btn btn-ghost" id="again">Jugar de nuevo</button></div>
+  </div>`;
+  document.getElementById('again').onclick=()=>{idx=-1;results=[];renderIntro();scrollTop();};
+}
+
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'});}
+renderIntro();
+</script>
+</body>
+</html>
